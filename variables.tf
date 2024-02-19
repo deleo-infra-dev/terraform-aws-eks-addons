@@ -68,6 +68,11 @@ variable "cert_manager_zones" {
   type        = list(string)
   default     = []
 }
+variable "cert_manager" {
+  description = "cert_manager add-on configuration values"
+  type        = any
+  default     = {}
+}
 variable "acme_email" {
   description = "email register on lentsencrypt acme"
   type        = string

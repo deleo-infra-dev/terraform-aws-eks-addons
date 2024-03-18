@@ -16,20 +16,6 @@ module "eks_addons" {
       addon_version            = try(var.aws_ebs_csi_driver.addon_version, "v1.20.0-eksbuild.1")
       service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
     }
-    coredns = {
-      configuration_values = jsonencode({
-        resources = {
-          limits = {
-            cpu = "0.25"
-            memory = "256M"
-          }
-          requests = {
-            cpu = "0.25"
-            memory = "256M"
-          }
-        }
-      })
-    }
   }
   enable_aws_load_balancer_controller = true
   aws_load_balancer_controller = {

@@ -93,13 +93,8 @@ variable "aws_efs_csi_driver" {
   type        = any
   default     = {}
 }
-variable "enable_aws_cluster_issuer" {
-  description = "enable aws cluster issuer"
-  type        = bool
-  default     = false
-}
-variable "enable_godaddy_cluster_issuer" {
-  description = "enable godaddy cluster issuer"
+variable "create_aws_cluster_issuer" {
+  description = "create aws cluster issuer"
   type        = bool
   default     = false
 }

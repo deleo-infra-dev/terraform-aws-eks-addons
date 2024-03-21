@@ -13,27 +13,32 @@ data "aws_route53_zone" "cert_manager" {
   name = element(local.cert_manager_zones, count.index)
 }
 
-resource "kubectl_manifest" "aws_prod_cluster_issuer" {
-  count = var.create_aws_cluster_issuer ? 1 : 0
-
-  yaml_body = <<-YAML
-    apiVersion: cert-manager.io/v1
-    kind: ClusterIssuer
-    metadata:
-      name: letsencrypt-prod
-    spec:
-      acme:
-        email: ${var.acme_email}
-        server: https://acme-v02.api.letsencrypt.org/directory
-        privateKeySecretRef:
-          name: letsencrypt-prod
-        solvers:
-        - dns01:
-            cnameStrategy: Follow
-            route53:
-              region: ${var.region}
-  YAML
-
+resource "helm_release" "cluster_issuer" {
+  name       = "cluster-issuer"
+  namespace  = "cert-manager"
+  repository = "https://bedag.github.io/helm-charts/"
+  chart      = "raw"
+  version    = "2.0.0"
+  values = [
+    <<-EOF
+    resources:
+    - apiVersion: cert-manager.io/v1
+      kind: ClusterIssuer
+      metadata:
+        name: letsencrypt-prod
+      spec:
+        acme:
+          email: ${var.acme_email}
+          server: https://acme-v02.api.letsencrypt.org/directory
+          privateKeySecretRef:
+            name: letsencrypt-prod
+          solvers:
+          - dns01:
+              cnameStrategy: Follow
+              route53:
+                region: ${var.region}
+    EOF
+  ]
   depends_on = [
     module.eks_addons
   ]

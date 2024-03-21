@@ -14,6 +14,8 @@ data "aws_route53_zone" "cert_manager" {
 }
 
 resource "helm_release" "cluster_issuer" {
+  count = var.create_aws_cluster_issuer ? 1 : 0
+
   name       = "cluster-issuer"
   namespace  = "cert-manager"
   repository = "https://bedag.github.io/helm-charts/"

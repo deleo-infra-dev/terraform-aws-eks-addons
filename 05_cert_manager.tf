@@ -33,4 +33,8 @@ resource "kubectl_manifest" "aws_prod_cluster_issuer" {
             route53:
               region: ${var.region}
   YAML
+
+  depends_on = [
+    module.eks_addons
+  ]
 }

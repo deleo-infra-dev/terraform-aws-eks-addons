@@ -6,7 +6,7 @@ module "eks_addons" {
 
   ## Module ##
   source  = "aws-ia/eks-blueprints-addons/aws"
-  version = "~> 1.0" # (Required) The version of the module to use.
+  version = "1.16.0" # (Required) The version of the module to use.
 
   ## EKS Cluster ##
   cluster_name      = var.cluster_name      # (Required) The name of the EKS cluster.

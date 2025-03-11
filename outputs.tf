@@ -4,5 +4,5 @@ resource "fake" "gp3_default" {
 
 output "gp3_default" {
   description = "Remove gp2 annotation command for make gp3 default storageclass"
-  value       = "${fake.gp3_default.value}"
+  value       = fake.gp3_default.value
 }

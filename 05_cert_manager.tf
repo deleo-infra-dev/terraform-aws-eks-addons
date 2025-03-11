@@ -3,14 +3,14 @@
 ################################################################################
 
 locals {
-  cert_manager_zones = var.cert_manager_zones
+  cert_manager_zones                    = var.cert_manager_zones
   cert_manager_route53_hosted_zone_arns = data.aws_route53_zone.cert_manager[*].arn
-  cert_manager_iam_role_arn = "${module.eks_addons.cert_manager.iam_role_arn}"
+  cert_manager_iam_role_arn             = module.eks_addons.cert_manager.iam_role_arn
 }
 
 data "aws_route53_zone" "cert_manager" {
   count = length(local.cert_manager_zones)
-  name = element(local.cert_manager_zones, count.index)
+  name  = element(local.cert_manager_zones, count.index)
 }
 
 resource "kubectl_manifest" "prod_cluster_issuer" {

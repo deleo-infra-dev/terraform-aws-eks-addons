@@ -9,7 +9,7 @@ resource "random_string" "suffix" {
 }
 
 resource "aws_efs_file_system" "efs" {
-  creation_token = "${random_string.suffix.result}"
+  creation_token = random_string.suffix.result
   encrypted      = true
 }
 
@@ -29,7 +29,7 @@ resource "aws_security_group" "efs_sg" {
 }
 
 resource "aws_efs_mount_target" "efs_mt" {
-  for_each    = toset(slice(var.private_subnet_ids, 0, 3))
+  for_each        = toset(slice(var.private_subnet_ids, 0, 3))
   file_system_id  = aws_efs_file_system.efs.id
   subnet_id       = each.value
   security_groups = [aws_security_group.efs_sg.id]

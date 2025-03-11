@@ -1,0 +1,9 @@
+
+## IDE (IntelliJ)
+.idea/**
+
+## Terraform (Terraform)
+.terraform/**
+
+## trunk
+.trunk/**

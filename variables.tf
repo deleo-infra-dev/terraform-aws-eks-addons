@@ -40,8 +40,8 @@ variable "oidc_provider_arn" {
 }
 variable "oidc_provider" {
   description = "oidc provider"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "cluster_ca_certificate" {
   description = "cluster ca certificate"

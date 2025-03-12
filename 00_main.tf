@@ -44,6 +44,11 @@ module "eks_addons" {
     ## kube-proxy ##
     kube-proxy = {}
 
+    ## Cert Manager ##
+    enable_cert_manager                   = true
+    cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns
+    cert_manager                          = { set = try(var.cert_manager.set, []) }
+    
     ## AWS EBS CSI Driver ##
     enable_aws_ebs_csi_driver = true
     aws-ebs-csi-driver = {
@@ -93,10 +98,7 @@ module "eks_addons" {
       )
     }
 
-    ## Cert Manager ##
-    enable_cert_manager                   = true
-    cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns
-    cert_manager                          = { set = try(var.cert_manager.set, []) }
+
 
     ## Tags ##
     tags = var.tags
@@ -104,15 +106,3 @@ module "eks_addons" {
   }
 }
 
-# // Ensure the region variable is passed to the external secrets configuration
-# resource "kubectl_manifest" "cluster_secretstore" {
-#   yaml_body = templatefile("${path.module}/cluster_secretstore.yaml.tpl", {
-#     name                = "default"
-#     region              = var.region
-#     service_account_name = local.es_service_account_name
-#   })
-
-#   depends_on = [
-#     module.eks_addons
-#   ]
-# }

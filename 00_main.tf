@@ -39,15 +39,26 @@ module "eks_addons" {
     }
 
     ## VPC CNI ##
-    vpc-cni = {}
+    vpc-cni = {
+      most_recent = true
+    }
 
     ## kube-proxy ##
-    kube-proxy = {}
+    kube-proxy = {
+      most_recent = true
+    }
 
-    ## Cert Manager ##
-    enable_cert_manager                   = true
+    ## AWS Load Balancer Controller ##
+    aws-load-balancer-controller = {
+      most_recent = true
+    }
+    
+    ## cert_manager ##
+    cert_manager = {
+      set = try(var.cert_manager.set, [])
+    }
+    ## cert_manager_route53_hosted_zone_arns ##
     cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns
-    cert_manager                          = { set = try(var.cert_manager.set, []) }
     
     ## AWS EBS CSI Driver ##
     enable_aws_ebs_csi_driver = true
@@ -58,7 +69,6 @@ module "eks_addons" {
 
     ## AWS EFS CSI Driver ##
     enable_aws_efs_csi_driver = true
-
     aws-efs-csi-driver = {
       most_recent              = true
       #service_account_role_arn = module.irsa-efs-csi.iam_role_arn

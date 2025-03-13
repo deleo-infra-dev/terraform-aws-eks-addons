@@ -17,11 +17,8 @@ module "eks_addons" {
 
   ## [[ EKS Addons ]] ##
   eks_addons = {
-    
-    enable_aws_ebs_csi_driver = true
-    ## aws-ebs-csi-driver ##
     aws-ebs-csi-driver = {
-      most_recent              = true
+      addon_version            = try(var.aws_ebs_csi_driver.addon_version, "v1.20.0-eksbuild.1")
       service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
     }
 
@@ -57,19 +54,6 @@ module "eks_addons" {
 
     ## [aws-efs-csi-driver] ##
     enable_aws_efs_csi_driver = true
-    aws-efs-csi-driver = {
-      most_recent              = true
-      #service_account_role_arn = module.irsa-efs-csi.iam_role_arn
-      repository     = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
-      chart_version  = "2.4.1"
-      aws_efs_csi_driver = {
-        role_policies = [
-          "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess",
-          "arn:aws:iam::aws:policy/AWSKeyManagementServicePowerUser",
-          "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-        ]
-      }
-    }
 
     ## [External Secrets] ##
     enable_external_secrets = true
@@ -84,27 +68,23 @@ module "eks_addons" {
       set = concat([
         {
           name = "policy"
-          value = "${var.external_dns_policy}" # (Optional) The policy for the external DNS addon.
+          value = "${var.external_dns_policy}"
         },
         {
           name = "domainFilters"
-          value = "{${local.external_dns_domain_filters}}" # (Optional) The domain filters for the external DNS addon.
+          value = "{${local.external_dns_domain_filters}}"
         }
       ],
       try(var.external_dns.set, [])
       )
-    } # end of external dns section 
+    }
     external_dns_route53_zone_arns = local.external_dns_route53_zone_arns # (Optional) The Route53 zone ARNs for the external DNS addon.
     
 
     ## [cert_manager] ##
     enable_cert_manager = true # (Optional) Whether to enable the cert manager addon.
-    cert_manager = {
-      set = try(
-        var.cert_manager.set, []
-        ) # (Optional) The set for the cert manager addon.
-    } # end of cert manager section
-    cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns # (Optional) The Route53 zone ARNs for the cert manager addon.
+    cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns
+    cert_manager = {set = try(var.cert_manager.set, [])}
 
     ## [vpc-cni] ##
     vpc-cni = {

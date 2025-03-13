@@ -1,13 +1,26 @@
+
+################################################################################
+# [ Data ] #
+## - Data for the EKS Cluster Auth
+################################################################################
 data "aws_eks_cluster_auth" "this" {
   name = var.cluster_name
 }
 
+################################################################################
+# [ kubernetes ] #
+## - Kubernetes Provider
+################################################################################
 provider "kubernetes" {
   host                   = var.cluster_endpoint
   cluster_ca_certificate = base64decode(var.cluster_ca_certificate)
   token                  = data.aws_eks_cluster_auth.this.token
 }
 
+################################################################################
+# [ kubectl ] #
+## - Kubectl Provider
+################################################################################
 provider "kubectl" {
   apply_retry_count      = 5
   host                   = var.cluster_endpoint
@@ -16,6 +29,10 @@ provider "kubectl" {
   token                  = data.aws_eks_cluster_auth.this.token
 }
 
+################################################################################
+# [ helm ] #
+## - Helm Provider
+################################################################################
 provider "helm" {
   kubernetes {
     host                   = var.cluster_endpoint
@@ -24,6 +41,10 @@ provider "helm" {
   }
 }
 
+################################################################################
+# [ terraform ] #
+## - Terraform Provider
+################################################################################  
 terraform {
   required_version = ">= 1.0"
 

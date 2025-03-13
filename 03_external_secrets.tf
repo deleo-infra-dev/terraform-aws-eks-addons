@@ -2,10 +2,18 @@
 # External-Secrets
 ################################################################################
 
+################################################################################
+# [ Local ] #
+## - Local variables for the External Secrets
+################################################################################
 locals {
   es_service_account_name = "external-secrets-sa"
 }
 
+################################################################################
+# [ kubectl_manifest ] #
+## - Cluster Secret Store
+################################################################################  
 resource "kubectl_manifest" "cluster_secretstore" {
   yaml_body  = <<YAML
 apiVersion: external-secrets.io/v1beta1
@@ -25,6 +33,6 @@ spec:
 YAML
 
   depends_on = [
-    module.eks_addons
+    module.eks_addons # (Optional) The module to depend on.
   ]
 }

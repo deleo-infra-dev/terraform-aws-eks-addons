@@ -1,52 +1,52 @@
 variable "region" {
   description = "Region"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "vpc_id" {
   description = "vpc id"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "private_subnet_ids" {
   description = "vpc private subnet ids"
-  type        = list(string)
-  default     = []
+  type        = any
+  default     = {}
 }
 variable "eks_private_cidr" {
   description = "eks private cidr"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "cluster_name" {
   description = "cluster name"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "cluster_endpoint" {
   description = "cluster endpoint"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "cluster_version" {
   description = "cluster version"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "oidc_provider_arn" {
   description = "oidc provider arn"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "oidc_provider" {
   description = "oidc provider"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "cluster_ca_certificate" {
   description = "cluster ca certificate"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "external_dns_policy" {
   description = "external-dns policy"
@@ -85,11 +85,16 @@ variable "tags" {
 }
 variable "aws_ebs_csi_driver" {
   description = "aws ebs csi driver override variables"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "aws_efs_csi_driver" {
   description = "aws efs csi driver override variables"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
+}
+variable "create_aws_cluster_issuer" {
+  description = "create aws cluster issuer"
+  type        = bool
+  default     = false
 }

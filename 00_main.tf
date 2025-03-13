@@ -8,8 +8,6 @@ module "eks_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
   version = "~> 1.0" #ensure to update this to the latest/desired version
 
-  # version = "1.20.0" # (Required) The version of the module to use.
-
   ## EKS Cluster ##
   cluster_name      = var.cluster_name      # (Required) The name of the EKS cluster.
   cluster_endpoint  = var.cluster_endpoint  # (Required) The endpoint of the EKS cluster.
@@ -17,10 +15,17 @@ module "eks_addons" {
   oidc_provider_arn = var.oidc_provider_arn # (Required) The ARN of the OIDC provider.
 
 
-  ## [[ 1️⃣ EKS Addons ]] ##
+  ## [[ EKS Addons ]] ##
   eks_addons = {
+    
+    enable_aws_ebs_csi_driver = true
+    ## aws-ebs-csi-driver ##
+    aws-ebs-csi-driver = {
+      most_recent              = true
+      service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
+    }
 
-    ## CoreDNS ##
+    ## [ CoreDNS ] ##
     coredns = {
       most_recent = true
       replicas    = 2 # (Optional) The number of replicas for the CoreDNS addon.
@@ -38,36 +43,19 @@ module "eks_addons" {
       })
     }
 
-    ## VPC CNI ##
-    vpc-cni = {
-      most_recent = true
-    }
-
-    ## kube-proxy ##
-    kube-proxy = {
-      most_recent = true
-    }
-
-    ## AWS Load Balancer Controller ##
+    ## [aws-load-balancer-controller] ##
+    enable_aws_load_balancer_controller = true # (Optional) Whether to enable the aws load balancer controller addon.
     aws-load-balancer-controller = {
-      most_recent = true
-    }
-    
-    ## cert_manager ##
-    cert_manager = {
-      set = try(var.cert_manager.set, [])
-    }
-    ## cert_manager_route53_hosted_zone_arns ##
-    cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns
-    
-    ## AWS EBS CSI Driver ##
-    enable_aws_ebs_csi_driver = true
-    aws-ebs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
-    }
+      set = [
+        {
+          name  = "enableServiceMutatorWebhook" # (Optional) Whether to enable the service mutator webhook for the aws load balancer controller addon.
+          value = "false" # (Optional) Whether to enable the service mutator webhook for the aws load balancer controller addon.
+        }
+      ]
+    } # end of aws load balancer controller section
 
-    ## AWS EFS CSI Driver ##
+
+    ## [aws-efs-csi-driver] ##
     enable_aws_efs_csi_driver = true
     aws-efs-csi-driver = {
       most_recent              = true
@@ -83,32 +71,50 @@ module "eks_addons" {
       }
     }
 
-    ## External Secrets ##
+    ## [External Secrets] ##
+    enable_external_secrets = true
     external_secrets = {
       service_account_name = "${local.es_service_account_name}"
     }
 
 
     ## External DNS ##
-    enable_external_dns            = true
-    external_dns_route53_zone_arns = local.external_dns_route53_zone_arns # (Optional) A list of Route53 zone ARNs to use for the external DNS addon.
+    enable_external_dns = true # (Optional) Whether to enable the external DNS addon.
     external_dns = {
-      set = concat(
-        try(var.external_dns.set, []),
-        [
-          {
-            name  = "policy"
-            value = "${var.external_dns_policy}"
-          },
-          {
-            name  = "domainFilters"
-            value = "{${local.external_dns_domain_filters}}"
-          }
-        ]
+      set = concat([
+        {
+          name = "policy"
+          value = "${var.external_dns_policy}" # (Optional) The policy for the external DNS addon.
+        },
+        {
+          name = "domainFilters"
+          value = "{${local.external_dns_domain_filters}}" # (Optional) The domain filters for the external DNS addon.
+        }
+      ],
+      try(var.external_dns.set, [])
       )
-    }
+    } # end of external dns section 
+    external_dns_route53_zone_arns = local.external_dns_route53_zone_arns # (Optional) The Route53 zone ARNs for the external DNS addon.
+    
 
+    ## [cert_manager] ##
+    enable_cert_manager = true # (Optional) Whether to enable the cert manager addon.
+    cert_manager = {
+      set = try(
+        var.cert_manager.set, []
+        ) # (Optional) The set for the cert manager addon.
+    } # end of cert manager section
+    cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns # (Optional) The Route53 zone ARNs for the cert manager addon.
 
+    ## [vpc-cni] ##
+    vpc-cni = {
+      most_recent = true
+    } # end of vpc-cni section
+
+    ## [kube-proxy] ##
+    kube-proxy = {
+      most_recent = true
+    } # end of kube-proxy section
 
     ## Tags ##
     tags = var.tags

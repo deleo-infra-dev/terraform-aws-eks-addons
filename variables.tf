@@ -1,12 +1,12 @@
 variable "region" {
   description = "Region"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "vpc_id" {
   description = "vpc id"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "private_subnet_ids" {
   description = "vpc private subnet ids"
@@ -19,24 +19,20 @@ variable "eks_private_cidr" {
   default     = {}
 }
 variable "cluster_name" {
-  description = "cluster name"
-  type        = any
-  default     = {}
+  description = "Name of the EKS cluster"
+  type        = string
 }
 variable "cluster_endpoint" {
-  description = "cluster endpoint"
-  type        = any
-  default     = {}
+  description = "Endpoint for your Kubernetes API server"
+  type        = string
 }
 variable "cluster_version" {
-  description = "cluster version"
-  type        = any
-  default     = {}
+  description = "Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.24`)"
+  type        = string
 }
 variable "oidc_provider_arn" {
-  description = "oidc provider arn"
-  type        = any
-  default     = {}
+  description = "The ARN of the cluster OIDC Provider"
+  type        = string
 }
 variable "oidc_provider" {
   description = "oidc provider"
@@ -79,19 +75,20 @@ variable "acme_email" {
   default     = "noreply@example.com"
 }
 variable "tags" {
-  description = "tags"
-  type        = any
-  default     = {}
-}
-variable "aws_ebs_csi_driver" {
-  description = "Configuration for AWS EBS CSI Driver"
-  type        = map(any)  # 객체 타입으로 선언
+  description = "A map of tags to add to all resources"
+  type        = map(string)
   default     = {}
 }
 
 variable "aws_efs_csi_driver" {
-  description = "aws efs csi driver override variables"
-  type       = map(any)  # 객체 타입으로 선언
+  description = "EFS CSI Driver add-on configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "aws_ebs_csi_driver" {
+  description = "EBS CSI Driver add-on configuration values"
+  type        = any
   default     = {}
 }
 variable "create_aws_cluster_issuer" {

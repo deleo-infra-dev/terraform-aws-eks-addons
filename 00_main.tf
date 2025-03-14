@@ -94,6 +94,14 @@ module "eks_addons" {
         {
           name  = "installCRDs"
           value = true
+        },
+        {
+          name  = "issuerName"
+          value = "letsencrypt-prod"
+        },
+        {
+          name  = "issuerEmail"
+          value = "${var.acme_email}"
         }
       ]
     }

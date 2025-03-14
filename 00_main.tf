@@ -90,21 +90,14 @@ module "eks_addons" {
     enable_cert_manager                   = true # (Optional) Whether to enable the cert manager addon.
     cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns
     cert_manager = {
-      set = [
-        {
-          name  = "installCRDs"
-          value = true
-        },
-        {
-          name  = "issuerName"
-          value = "letsencrypt-prod"
-        },
-        {
-          name  = "issuerEmail"
-          value = "${var.acme_email}"
-        }
-      ]
+      set = concat([[{
+        name  = "prometheus.serviceMonitor.enabled"
+        value = "true"
+      }]])
     }
+    acme_email = "${var.acme_email}"
+
+
 
     ## [vpc-cni] ##
     vpc-cni = {

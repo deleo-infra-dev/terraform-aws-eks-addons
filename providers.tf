@@ -45,7 +45,7 @@ terraform {
       version = ">= 2.9"
     }
     fake = {
-      source  = "rayshoo/fake"
+      source = "rayshoo/fake"
       version = "1.0.0"
     }
   }

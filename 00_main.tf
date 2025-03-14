@@ -38,6 +38,7 @@ module "eks_addons" {
       most_recent = true
     } # end of kube-proxy section
     aws-ebs-csi-driver = {
+      addon_version            = try(var.aws_ebs_csi_driver.addon_version, "v1.20.0-eksbuild.1")
       service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
     }
   }

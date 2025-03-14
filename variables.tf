@@ -5,8 +5,8 @@ variable "region" {
 }
 variable "vpc_id" {
   description = "vpc id"
-  type        = string
-  default     = ""
+  type        = any
+  default     = {}
 }
 variable "private_subnet_ids" {
   description = "vpc private subnet ids"

@@ -38,7 +38,6 @@ module "eks_addons" {
       most_recent = true
     } # end of kube-proxy section
     aws-ebs-csi-driver = {
-      most_recent = true # 최신 버전 사용 권장
       service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
     }
   }
@@ -53,9 +52,7 @@ module "eks_addons" {
     ]
   }
   enable_aws_efs_csi_driver = true
-  aws_efs_csi_driver = {
-    most_recent = true # 최신 버전 사용 권장
-  }
+  
   enable_external_secrets = true
   enable_external_dns = true
   external_dns_route53_zone_arns = local.external_dns_route53_zone_arns

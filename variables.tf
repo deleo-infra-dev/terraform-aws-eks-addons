@@ -68,11 +68,6 @@ variable "cert_manager_zones" {
   type        = list(string)
   default     = []
 }
-variable "cert_manager" {
-  description = "cert_manager add-on configuration values"
-  type        = any
-  default     = {}
-}
 variable "acme_email" {
   description = "email register on lentsencrypt acme"
   type        = string
@@ -92,9 +87,4 @@ variable "aws_efs_csi_driver" {
   description = "aws efs csi driver override variables"
   type        = any
   default     = {}
-}
-variable "create_aws_cluster_issuer" {
-  description = "create aws cluster issuer"
-  type        = bool
-  default     = false
 }

@@ -16,7 +16,7 @@ resource "random_string" "suffix" {
 # [ aws_efs_file_system ] # 
 ################################################################################
 resource "aws_efs_file_system" "efs" {
-  creation_token = random_string.suffix.result 
+  creation_token = random_string.suffix.result
   encrypted      = true
 }
 

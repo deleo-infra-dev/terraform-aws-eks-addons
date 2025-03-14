@@ -20,14 +20,14 @@ module "eks_addons" {
 
     ## [ aws-ebs-csi-driver ] ##
     aws-ebs-csi-driver = {
-      most_recent = true # 최신 버전 사용 권장
+      most_recent              = true                             # 최신 버전 사용 권장
       service_account_role_arn = module.irsa-ebs-csi.iam_role_arn # (필수) IRSA 역할 ARN
     }
 
     ## [ CoreDNS ] ##
     coredns = {
       most_recent = true # 최신 버전 사용 권장
-      replicas    = 2 # (Optional) The number of replicas for the CoreDNS addon.
+      replicas    = 2    # (Optional) The number of replicas for the CoreDNS addon.
       configuration_values = jsonencode({
         resources = {
           limits = {
@@ -48,7 +48,7 @@ module "eks_addons" {
       set = [
         {
           name  = "enableServiceMutatorWebhook" # (Optional) Whether to enable the service mutator webhook for the aws load balancer controller addon.
-          value = "false" # (Optional) Whether to enable the service mutator webhook for the aws load balancer controller addon.
+          value = "false"                       # (Optional) Whether to enable the service mutator webhook for the aws load balancer controller addon.
         }
       ]
     } # end of aws load balancer controller section
@@ -72,22 +72,22 @@ module "eks_addons" {
     external_dns = {
       set = concat([
         {
-          name = "policy"
+          name  = "policy"
           value = "${var.external_dns_policy}"
         },
         {
-          name = "domainFilters"
+          name  = "domainFilters"
           value = "{${local.external_dns_domain_filters}}"
         }
-      ],
-      try(var.external_dns.set, [])
+        ],
+        try(var.external_dns.set, [])
       )
     }
     external_dns_route53_zone_arns = local.external_dns_route53_zone_arns # (Optional) The Route53 zone ARNs for the external DNS addon.
-    
+
 
     ## [cert_manager] ##
-    enable_cert_manager = true # (Optional) Whether to enable the cert manager addon.
+    enable_cert_manager                   = true # (Optional) Whether to enable the cert manager addon.
     cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns
     cert_manager = {
       set = [

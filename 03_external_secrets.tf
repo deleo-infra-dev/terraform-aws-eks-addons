@@ -15,7 +15,7 @@ locals {
 ## - Cluster Secret Store
 ################################################################################  
 resource "kubectl_manifest" "cluster_secretstore" {
-  yaml_body  = <<YAML
+  yaml_body = <<YAML
 apiVersion: external-secrets.io/v1beta1
 kind: ClusterSecretStore
 metadata:

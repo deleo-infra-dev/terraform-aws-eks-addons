@@ -4,7 +4,7 @@
 
 locals {
   es_service_account_name = "external-secrets-sa"
-  es_region = "${tostring(var.region)}"
+  # es_region = "${tostring(var.region)}"
 }
 
 resource "helm_release" "cluster_secretstore" {
@@ -24,7 +24,7 @@ resource "helm_release" "cluster_secretstore" {
         provider:
           aws:
             service: SecretsManager
-            region: ${es_region}
+            region: ${tostring(var.region)}
             auth:
               jwt:
                 serviceAccountRef:

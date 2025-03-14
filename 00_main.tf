@@ -90,12 +90,19 @@ module "eks_addons" {
     enable_cert_manager                   = true # (Optional) Whether to enable the cert manager addon.
     cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns
     cert_manager = {
-      set = concat([[{
-        name  = "prometheus.serviceMonitor.enabled"
-        value = "true"
-      }]])
+      set = [
+       {name = "webhook.enabled", value = "true"},
+       {name = "webhook.securePort", value = "10250"},
+       {name = "prometheus.serviceMonitor.enabled", value = "true"},
+       {name = "issuerName", value = "letsencrypt-prod"},
+       {name = "issuerEmail", value = "${var.acme_email}"},
+       {name = "installCRDs", value = "true"},
+       {name = "acme.server", value = "https://acme-v02.api.letsencrypt.org/directory"},
+       {name = "acme.privateKeySecretRef.name", value = "letsencrypt-prod"},
+       {name = "acme.solvers.dns01.cnameStrategy", value = "Follow"},
+       {name = "acme.solvers.dns01.route53.region", value = "ap-northeast-2"}
+      ]
     }
-    acme_email = "${var.acme_email}"
 
 
 

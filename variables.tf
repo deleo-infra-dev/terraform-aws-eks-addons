@@ -1,52 +1,52 @@
 variable "region" {
   description = "Region"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "vpc_id" {
   description = "vpc id"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "private_subnet_ids" {
   description = "vpc private subnet ids"
-  type        = any
-  default     = {}
+  type        = list(string)
+  default     = []
 }
 variable "eks_private_cidr" {
   description = "eks private cidr"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "cluster_name" {
   description = "cluster name"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "cluster_endpoint" {
   description = "cluster endpoint"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "cluster_version" {
   description = "cluster version"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "oidc_provider_arn" {
   description = "oidc provider arn"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "oidc_provider" {
   description = "oidc provider"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "cluster_ca_certificate" {
   description = "cluster ca certificate"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "external_dns_policy" {
   description = "external-dns policy"
@@ -68,6 +68,11 @@ variable "cert_manager_zones" {
   type        = list(string)
   default     = []
 }
+variable "cert_manager" {
+  description = "cert_manager add-on configuration values"
+  type        = any
+  default     = {}
+}
 variable "acme_email" {
   description = "email register on lentsencrypt acme"
   type        = string
@@ -80,11 +85,16 @@ variable "tags" {
 }
 variable "aws_ebs_csi_driver" {
   description = "aws ebs csi driver override variables"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
 }
 variable "aws_efs_csi_driver" {
   description = "aws efs csi driver override variables"
-  type        = any
-  default     = {}
+  type        = string
+  default     = ""
+}
+variable "create_aws_cluster_issuer" {
+  description = "create aws cluster issuer"
+  type        = bool
+  default     = false
 }

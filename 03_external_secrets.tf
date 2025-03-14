@@ -3,7 +3,9 @@
 ################################################################################
 
 locals {
+
   es_service_account_name = "external-secrets-sa"
+  #es_region = module.eks.cluster_region
   # es_region = "${tostring(var.region)}"
 }
 
@@ -24,7 +26,7 @@ resource "helm_release" "cluster_secretstore" {
         provider:
           aws:
             service: SecretsManager
-            region: ${tostring(var.region)}
+            region: module.eks.cluster_region
             auth:
               jwt:
                 serviceAccountRef:

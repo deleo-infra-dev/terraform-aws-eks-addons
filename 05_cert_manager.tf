@@ -45,3 +45,4 @@ resource "helm_release" "cluster_issuer" {
     module.eks_addons
   ]
 }
+

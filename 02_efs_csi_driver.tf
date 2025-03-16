@@ -1,12 +1,11 @@
 ################################################################################
 # Random String for EFS File System Name
+# - 랜덤 문자열 생성
 ################################################################################
-# https://github.com/aws-ia/terraform-aws-eks-blueprints/blob/v3.5.2/examples/aws-efs-csi-driver/main.tf
-
 resource "random_string" "suffix" {
-  length  = 8
-  special = false # trunk-ignore(checkov/CKV_TF_1)
-  upper   = false # trunk-ignore(checkov/CKV_TF_1)
+  length  = 8 # 8자리 랜덤 문자열 생성
+  special = false # 특수문자 사용 안함
+  upper   = false # 대문자 사용 안함
 }
 ################################################################################
 # EFS File System
@@ -53,11 +52,30 @@ resource "aws_efs_mount_target" "efs_mt" {
   security_groups = [aws_security_group.efs_sg.id]
 }
 
+
 ################################################################################
-# EFS Storage Class
-# - Storage class for the EFS file system
+# EFS StorageClass 삭제
+# - 기존 StorageClass가 있는 경우 삭제
 ################################################################################
+# 기존 EFS StorageClass 삭제
+# --ignore-not-found: StorageClass가 없는 경우에도 에러가 발생하지 않도록 함
+resource "null_resource" "delete_existing_storage_class" {
+  provisioner "local-exec" {
+    command = "kubectl delete sc efs --ignore-not-found"
+  }
+}
+
+################################################################################
+# EFS StorageClass 생성
+# - provisioner: AWS EFS CSI 드라이버 사용
+# - parameters:
+#   - provisioningMode: efs-ap (access point 모드)
+#   - fileSystemId: EFS 파일시스템 ID
+#   - directoryPerms: EFS 디렉토리 권한 (700: 소유자만 읽기/쓰기/실행 가능)
+################################################################################
+
 resource "kubectl_manifest" "efs_storage_class" {
+  depends_on = [null_resource.delete_existing_storage_class]
   yaml_body = <<-YAML
     apiVersion: storage.k8s.io/v1
     kind: StorageClass

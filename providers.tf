@@ -9,11 +9,10 @@ provider "kubernetes" {
 }
 
 provider "kubectl" {
-  apply_retry_count      = 5
   host                   = var.cluster_endpoint
   cluster_ca_certificate = base64decode(var.cluster_ca_certificate)
-  load_config_file       = false
   token                  = data.aws_eks_cluster_auth.this.token
+  load_config_file       = false
 }
 
 provider "helm" {
@@ -50,3 +49,4 @@ terraform {
     }
   }
 }
+

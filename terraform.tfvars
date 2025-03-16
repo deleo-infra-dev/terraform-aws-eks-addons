@@ -1,0 +1,9 @@
+oidc_provider = "oidc.eks.region.amazonaws.com/id/EXAMPLED539D4633E53DE1B71EXAMPLE"
+region = "ap-northeast-2"
+vpc_id = "vpc-0123456789abcdefg"
+cluster_name = "test-cluster-x"
+eks_private_cidr = "10.0.0.0/16"
+private_subnet_ids      = ["subnet-xxx", "subnet-yyy", "subnet-zzz"]
+cluster_ca_certificate  = "your-cluster-ca-certificate"
+cluster_endpoint        = "your-cluster-endpoint"
+cluster_version         = "1.30"

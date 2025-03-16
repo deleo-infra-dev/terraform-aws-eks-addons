@@ -9,19 +9,18 @@ variable "vpc_id" {
   default     = ""
 }
 variable "private_subnet_ids" {
-  description = "vpc private subnet ids"
-  type        = any
-  default     = {}
+  type        = list(string)
+  description = "프라이빗 서브넷 ID 목록"
 }
 variable "eks_private_cidr" {
-  description = "eks private cidr"
-  type        = any
-  default     = {}
+  description = "CIDR block for EKS private subnets"
+  type        = string
 }
 variable "cluster_name" {
   description = "Name of the EKS cluster"
   type        = string
 }
+
 variable "cluster_endpoint" {
   description = "Endpoint for your Kubernetes API server"
   type        = string
@@ -35,14 +34,12 @@ variable "oidc_provider_arn" {
   type        = string
 }
 variable "oidc_provider" {
-  description = "oidc provider"
-  type        = any
-  default     = {}
+  description = "OpenID Connect provider URL"
+  type        = string
 }
 variable "cluster_ca_certificate" {
-  description = "cluster ca certificate"
-  type        = any
-  default     = {}
+  type        = string
+  description = "EKS 클러스터 CA 인증서"
 }
 variable "external_dns_policy" {
   description = "external-dns policy"
@@ -96,3 +93,4 @@ variable "create_aws_cluster_issuer" {
   type        = bool
   default     = false
 }
+

@@ -1,23 +1,39 @@
 ################################################################################
-# EBS-CSI-Driver
+# EKS Cluster
+# - https://aws.github.io/aws-eks-best-practices/security/iam/#use-irsa-for-csi-driver
 ################################################################################
-# https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/ 
-
-data "aws_iam_policy" "ebs_csi_policy" {
-  arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+data "aws_eks_cluster" "this" {
+  name = var.cluster_name
 }
 
+################################################################################
+# IAM Policy for EBS CSI Driver
+################################################################################
+data "aws_iam_policy" "ebs_csi_policy" {
+  name = "AmazonEBSCSIDriverPolicy"
+}
+
+# trunk-ignore(checkov/CKV_TF_1)
+################################################################################
+# IRSA for EBS CSI Driver
+## - https://aws.github.io/aws-eks-best-practices/security/iam/#use-irsa-for-csi-driver
+################################################################################
 module "irsa-ebs-csi" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version = "4.7.0"
 
   create_role                   = true
-  role_name_prefix              = "AmazonEKSTFEBSCSIRole-"
-  provider_url                  = var.oidc_provider
-  role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
+  role_name_prefix             = "AmazonEKSTFEBSCSIRole-"
+  provider_url                 = var.oidc_provider
+  role_policy_arns             = [data.aws_iam_policy.ebs_csi_policy.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
 }
 
+
+################################################################################
+# Storage Class
+## - https://aws.github.io/aws-eks-best-practices/storage/ebs/#use-gp3-storage-class
+################################################################################
 resource "kubectl_manifest" "ebs_gp3_storage_class" {
   yaml_body = <<-YAML
     apiVersion: storage.k8s.io/v1
@@ -33,6 +49,10 @@ resource "kubectl_manifest" "ebs_gp3_storage_class" {
   YAML
 }
 
+################################################################################
+# Storage Class
+## - https://aws.github.io/aws-eks-best-practices/storage/ebs/#use-gp3-storage-class
+################################################################################
 resource "kubectl_manifest" "ebs_gp3_full_storage_class" {
   yaml_body = <<-YAML
     apiVersion: storage.k8s.io/v1

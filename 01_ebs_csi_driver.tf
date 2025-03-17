@@ -2,9 +2,9 @@
 # EKS Cluster
 # - https://aws.github.io/aws-eks-best-practices/security/iam/#use-irsa-for-csi-driver
 ################################################################################
-data "aws_eks_cluster" "this" {
-  name = var.cluster_name
-}
+# data "aws_eks_cluster" "this" {
+#   name = var.cluster_name
+# }
 
 ################################################################################
 # IAM Policy for EBS CSI Driver

@@ -5,13 +5,19 @@
 locals {
   cert_manager_zones = var.cert_manager_zones
   cert_manager_route53_hosted_zone_arns = data.aws_route53_zone.cert_manager[*].arn
-  cert_manager_iam_role_arn = "${module.eks_addons.cert_manager.iam_role_arn}"
 }
 
+################################################################################
+# Route53 영역 데이터 소스
+################################################################################
 data "aws_route53_zone" "cert_manager" {
   count = length(local.cert_manager_zones)
-  name = element(local.cert_manager_zones, count.index)
+  name  = element(local.cert_manager_zones, count.index)
 }
+
+################################################################################
+# ClusterIssuer 생성 (Let's Encrypt)
+################################################################################
 
 resource "helm_release" "cluster_issuer" {
   count = var.create_aws_cluster_issuer ? 1 : 0
@@ -21,6 +27,7 @@ resource "helm_release" "cluster_issuer" {
   repository = "https://bedag.github.io/helm-charts/"
   chart      = "raw"
   version    = "2.0.0"
+
   values = [
     <<-EOF
     resources:
@@ -39,10 +46,12 @@ resource "helm_release" "cluster_issuer" {
               cnameStrategy: Follow
               route53:
                 region: ${var.region}
+                hostedZoneID: ${length(data.aws_route53_zone.cert_manager) > 0 ? data.aws_route53_zone.cert_manager[0].zone_id : ""}
     EOF
   ]
+
+  # module.eks_addons가 완료될 때까지 대기
   depends_on = [
     module.eks_addons
   ]
 }
-

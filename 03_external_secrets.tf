@@ -3,18 +3,17 @@
 ################################################################################
 
 locals {
-
   es_service_account_name = "external-secrets-sa"
-  #es_region = module.eks.cluster_region
-  # es_region = "${tostring(var.region)}"
 }
 
+# ClusterSecretStore 정의
 resource "helm_release" "cluster_secretstore" {
   name       = "cluster-secretstore"
   namespace  = "external-secrets"
   repository = "https://bedag.github.io/helm-charts/"
   chart      = "raw"
   version    = "2.0.0"
+
   values = [
     <<-EOF
     resources:
@@ -26,7 +25,7 @@ resource "helm_release" "cluster_secretstore" {
         provider:
           aws:
             service: SecretsManager
-            region: module.eks.cluster_region
+            region: ${var.region}
             auth:
               jwt:
                 serviceAccountRef:
@@ -34,6 +33,8 @@ resource "helm_release" "cluster_secretstore" {
                   namespace: external-secrets
     EOF
   ]
+
+  # module.eks_addons가 완료될 때까지 대기
   depends_on = [
     module.eks_addons
   ]

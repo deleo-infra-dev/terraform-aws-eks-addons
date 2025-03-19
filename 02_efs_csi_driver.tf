@@ -3,10 +3,11 @@
 # - 랜덤 문자열 생성
 ################################################################################
 resource "random_string" "suffix" {
-  length  = 8 # 8자리 랜덤 문자열 생성
-  special = false # 특수문자 사용 안함
-  upper   = false # 대문자 사용 안함
+  length  = 8  # 8자리 랜덤 문자열 생성
+  special = false  # 특수문자 사용 안함
+  upper   = false  # 대문자 사용 안함
 }
+
 ################################################################################
 # EFS File System
 # - https://aws.github.io/aws-eks-best-practices/storage/efs/#create-an-efs-file-system
@@ -14,6 +15,12 @@ resource "random_string" "suffix" {
 resource "aws_efs_file_system" "efs" {
   creation_token = "eks-efs-${var.cluster_name}-${random_string.suffix.result}"
   encrypted      = true
+  performance_mode = "generalPurpose"  # 대부분의 워크로드에 적합
+  throughput_mode = "bursting"  # 비용 효율적인 설정
+
+  lifecycle_policy {
+    transition_to_ia = "AFTER_30_DAYS"  # 30일 후 IA 스토리지로 전환하여 비용 절감
+  }
 
   tags = {
     Name = "eks-efs-${var.cluster_name}"
@@ -36,6 +43,13 @@ resource "aws_security_group" "efs_sg" {
     cidr_blocks = [var.eks_private_cidr]
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name = "eks-efs-sg-${var.cluster_name}"
   }
@@ -46,36 +60,18 @@ resource "aws_security_group" "efs_sg" {
 # - Mount target for the EFS file system
 ################################################################################
 resource "aws_efs_mount_target" "efs_mt" {
-  for_each    = toset(slice(var.private_subnet_ids, 0, 3))
+  for_each        = toset(slice(var.private_subnet_ids, 0, length(var.private_subnet_ids) > 3 ? 3 : length(var.private_subnet_ids)))
   file_system_id  = aws_efs_file_system.efs.id
   subnet_id       = each.value
   security_groups = [aws_security_group.efs_sg.id]
 }
 
-
-################################################################################
-# EFS StorageClass 삭제
-# - 기존 StorageClass가 있는 경우 삭제
-################################################################################
-# 기존 EFS StorageClass 삭제
-# --ignore-not-found: StorageClass가 없는 경우에도 에러가 발생하지 않도록 함
-resource "null_resource" "delete_existing_storage_class" {
-  provisioner "local-exec" {
-    command = "kubectl delete sc efs --ignore-not-found"
-  }
-}
-
 ################################################################################
 # EFS StorageClass 생성
-# - provisioner: AWS EFS CSI 드라이버 사용
-# - parameters:
-#   - provisioningMode: efs-ap (access point 모드)
-#   - fileSystemId: EFS 파일시스템 ID
-#   - directoryPerms: EFS 디렉토리 권한 (700: 소유자만 읽기/쓰기/실행 가능)
+## (마운트 타겟이 준비된 후 스토리지 클래스 생성)
 ################################################################################
-
 resource "kubectl_manifest" "efs_storage_class" {
-  depends_on = [null_resource.delete_existing_storage_class]
+  depends_on = [aws_efs_mount_target.efs_mt]  # 모든 마운트 타겟이 준비될 때까지 대기
   yaml_body = <<-YAML
     apiVersion: storage.k8s.io/v1
     kind: StorageClass

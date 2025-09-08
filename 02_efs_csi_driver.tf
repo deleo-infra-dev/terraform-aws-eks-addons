@@ -29,7 +29,7 @@ resource "aws_security_group" "efs_sg" {
 }
 
 resource "aws_efs_mount_target" "efs_mt" {
-  for_each    = toset(slice(var.private_subnet_ids, 0, 3))
+  for_each    = toset(slice(var.private_subnet_ids, 0, var.slice_count_efs_mount_target_subnet_ids))
   file_system_id  = aws_efs_file_system.efs.id
   subnet_id       = each.value
   security_groups = [aws_security_group.efs_sg.id]

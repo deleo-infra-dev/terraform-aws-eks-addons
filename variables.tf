@@ -93,8 +93,13 @@ variable "aws_efs_csi_driver" {
   type        = any
   default     = {}
 }
+variable "slice_count_efs_mount_target_subnet_ids" {
+  description = "slice count efs mount target subnet ids override variables"
+  type        = int
+  default     = 3
+}
 variable "create_aws_cluster_issuer" {
   description = "create aws cluster issuer"
   type        = bool
-  default     = false
+  default     = true
 }

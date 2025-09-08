@@ -95,7 +95,7 @@ variable "aws_efs_csi_driver" {
 }
 variable "slice_count_efs_mount_target_subnet_ids" {
   description = "slice count efs mount target subnet ids override variables"
-  type        = int
+  type        = number
   default     = 3
 }
 variable "create_aws_cluster_issuer" {

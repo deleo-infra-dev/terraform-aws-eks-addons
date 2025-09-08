@@ -93,8 +93,13 @@ variable "aws_efs_csi_driver" {
   type        = any
   default     = {}
 }
+variable "aws_efs_mount_target_subnet_ids" {
+  description = "aws efs mount target subnet ids override variables"
+  type        = any
+  default     = toset(slice(var.private_subnet_ids, 0, 3))
+}
 variable "create_aws_cluster_issuer" {
   description = "create aws cluster issuer"
   type        = bool
-  default     = false
+  default     = true
 }

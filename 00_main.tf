@@ -31,6 +31,7 @@ module "eks_addons" {
   enable_external_dns = true
   external_dns_route53_zone_arns = local.external_dns_route53_zone_arns
   external_dns = {
+    chart_version = try(var.external_dns.chart_version, "1.14.3")
     set = concat([
       {
         name = "policy"

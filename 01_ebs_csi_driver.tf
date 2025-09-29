@@ -27,6 +27,7 @@ resource "kubectl_manifest" "ebs_gp3_storage_class" {
         storageclass.kubernetes.io/is-default-class: "true"
       name: gp3
     provisioner: ebs.csi.aws.com
+    volumeBindingMode: WaitForFirstConsumer
     parameters:
       type: gp3
       csi.storage.k8s.io/fstype: ext4
@@ -40,6 +41,7 @@ resource "kubectl_manifest" "ebs_gp3_full_storage_class" {
     metadata:
       name: gp3-full
     provisioner: ebs.csi.aws.com
+    volumeBindingMode: WaitForFirstConsumer
     parameters:
       type: gp3
       iops: "5000"

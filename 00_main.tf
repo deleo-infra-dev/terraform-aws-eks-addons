@@ -19,6 +19,7 @@ module "eks_addons" {
   }
   enable_aws_load_balancer_controller = true
   aws_load_balancer_controller = {
+    chart_version = try(var.aws_load_balancer_controller.chart_version, "1.7.1")
     set = [
       {
         name = "enableServiceMutatorWebhook"

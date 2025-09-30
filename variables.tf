@@ -63,6 +63,11 @@ variable "external_dns" {
   type        = any
   default     = {}
 }
+variable "aws_load_balancer_controller" {
+  description = "aws loadbalancer controller configuration values"
+  type        = any
+  default     = {}
+}
 variable "cert_manager_zones" {
   description = "cert-manager zone list"
   type        = list(string)

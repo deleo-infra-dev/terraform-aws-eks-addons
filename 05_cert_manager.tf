@@ -38,8 +38,8 @@ resource "helm_release" "cluster_issuer" {
           - dns01:
               cnameStrategy: Follow
               route53:
-                region: ${try(var.region,"ap-northeast-2")}
-                accessKeyID: ${try(var.external_dns_access_key_id, "AKIASSZKZ2G2G7X72LNX")}
+                region: ${coalesce(var.region,"ap-northeast-2")}
+                accessKeyID: ${coalesce(var.external_dns_access_key_id, "AKIASSZKZ2G2G7X72LNX")}
                 secretAccessKeySecretRef:
                   name: cert-manager
                   key: secret-access-key

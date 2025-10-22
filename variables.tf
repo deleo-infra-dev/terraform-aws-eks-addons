@@ -71,7 +71,7 @@ variable "aws_load_balancer_controller" {
 variable "external_dns_access_key_id" {
   description = "external-dns aws route53 access key id"
   type        = any
-  default     = {}
+  default     = ""
 }
 variable "cert_manager_zones" {
   description = "cert-manager zone list"

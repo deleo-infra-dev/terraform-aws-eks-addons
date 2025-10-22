@@ -38,7 +38,11 @@ resource "helm_release" "cluster_issuer" {
           - dns01:
               cnameStrategy: Follow
               route53:
-                region: ${var.region}
+                region: ${try(var.region,"ap-northeast-2")}
+                accessKeyID: ${try(var.external_dns_access_key_id, "AKIASSZKZ2G2G7X72LNX")}
+                secretAccessKeySecretRef:
+                  name: cert-manager
+                  key: secret-access-key
     EOF
   ]
   depends_on = [

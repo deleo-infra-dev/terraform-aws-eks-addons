@@ -53,7 +53,10 @@ module "eks_addons" {
   }
   enable_cert_manager = true
   cert_manager_route53_hosted_zone_arns = local.cert_manager_route53_hosted_zone_arns
-  cert_manager = {set = try(var.cert_manager.set, [])}
+  cert_manager = {
+    chart_version = try(var.cert_manager.chart_version, "v1.14.3")
+    set = try(var.cert_manager.set, [])
+  }
 
   tags = var.tags
 }
